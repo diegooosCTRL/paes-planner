@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAES Ciencias Invierno 2027 | Planner PRO</title>
+
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: rgba(17, 24, 39, 0.08);
+      --shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+      --radius: 20px;
+
+      --fisica: #3b82f6;
+      --quimica: #8b5cf6;
+      --biologia: #22c55e;
+      --ensayo: #f97316;
+      --correccion: #111827;
+      --descanso: #facc15;
+
+      --good: #16a34a;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+
+      --btn: #111827;
+      --btnText: #ffffff;
+    }
+
+    body.dark {
+      --bg: #0b1220;
+      --card: rgba(255, 255, 255, 0.06);
+      --text: #f9fafb;
+      --muted: rgba(249, 250, 251, 0.65);
+      --border: rgba(255, 255, 255, 0.10);
+      --shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+
+      --btn: #f9fafb;
+      --btnText: #111827;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: 18px;
+      transition: 0.25s;
+    }
+
+    .wrap {
+      max-width: 1150px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    header {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    header .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+      max-width: 860px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      background: var(--btn);
+      color: var(--btnText);
+      transition: 0.2s;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .sub {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .miniCard {
+      background: rgba(0, 0, 0, 0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
+    body.dark .miniCard {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .miniCard h3 {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .miniCard ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .miniCard ul li b {
+      color: var(--text);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+
+    body.dark .pill {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .dot.fisica { background: var(--fisica); }
+    .dot.quimica { background: var(--quimica); }
+    .dot.biologia { background: var(--biologia); }
+    .dot.ensayo { background: var(--ensayo); }
+    .dot.correccion { background: var(--correccion); }
+    .dot.descanso { background: var(--descanso); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .dayTitle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dayTitle h2 {
+      font-size: 1.15rem;
+    }
+
+    .tag {
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.10);
+      color: var(--fisica);
+      font-weight: 800;
+      border: 1px solid rgba(59, 130, 246, 0.18);
+    }
+
+    .session {
+      padding: 12px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-left: 6px solid;
+      background: rgba(0, 0, 0, 0.02);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.dark .session {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .session .time {
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .session .desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .session .micro {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .session input[type="checkbox"] {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--good);
+      cursor: pointer;
+    }
+
+    .fisica { border-color: var(--fisica); }
+    .quimica { border-color: var(--quimica); }
+    .biologia { border-color: var(--biologia); }
+    .ensayo { border-color: var(--ensayo); }
+    .correccion { border-color: var(--correccion); }
+    .descanso { border-color: var(--descanso); }
+
+    .progressCard {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .progressTop {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .progressTop h2 {
+      font-size: 1.15rem;
+    }
+
+    .progressBar {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    body.dark .progressBar {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .progressFill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--good), var(--fisica), var(--quimica));
+      transition: 0.25s;
+    }
+
+    .progressInfo {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .notesGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 14px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.02);
+      color: var(--text);
+      outline: none;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    body.dark textarea {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .noteCard {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .noteCard h2 {
+      font-size: 1.1rem;
+    }
+
+    .smallHint {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    footer {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .finalWeek {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 10px;
+    }
+
+    .finalBox {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    body.dark .finalBox {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .finalBox b {
+      color: var(--text);
+    }
+
+    .tipStrong {
+      margin-top: 10px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    @media (max-width: 520px) {
+      header h1 {
+        font-size: 1.35rem;
+      }
+      header p {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="top">
+        <div>
+          <h1>📘 Planner PRO | PAES Ciencias Invierno 2027</h1>
+          <p>
+            Horario de alto rendimiento para objetivo <b>950+</b>.  
+            Basado en el temario oficial PAES Invierno Admisión 2027.
+            Incluye checklist, progreso semanal, modo oscuro, sección de errores y repaso final.
+          </p>
+        </div>
+
+        <div class="toolbar">
+          <button onclick="toggleDark()">🌙 Modo Oscuro</button>
+          <button onclick="saveAll()">💾 Guardar</button>
+          <button onclick="resetAll()">🧹 Reset Semana</button>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="miniCard">
+          <h3>🎯 Meta Realista (950+)</h3>
+          <ul>
+            <li><b>Física:</b> prioridad máxima (ejercicios repetidos).</li>
+            <li><b>Química:</b> cálculo + estequiometría + soluciones.</li>
+            <li><b>Biología:</b> comprensión + lectura activa.</li>
+            <li><b>Ensayo:</b> 1 semanal → 2 semanales en fase final.</li>
+          </ul>
+        </div>
+
+        <div class="miniCard">
+          <h3>⚡ Método PRO</h3>
+          <ul>
+            <li><b>25%</b> teoría corta + <b>75%</b> práctica.</li>
+            <li>Siempre anotar errores en "Banco de fallos".</li>
+            <li>Repasar errores antes de dormir (5-10 min).</li>
+            <li>Ensayo sin corrección = tiempo perdido.</li>
+          </ul>
+        </div>
+
+        <div class="miniCard">
+          <h3>📌 Código de colores</h3>
+          <div class="legend">
+            <div class="pill"><span class="dot fisica"></span>Física</div>
+            <div class="pill"><span class="dot quimica"></span>Química</div>
+            <div class="pill"><span class="dot biologia"></span>Biología</div>
+            <div class="pill"><span class="dot ensayo"></span>Ensayo</div>
+            <div class="pill"><span class="dot correccion"></span>Corrección</div>
+            <div class="pill"><span class="dot descanso"></span>Descanso</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="progressCard">
+      <div class="progressTop">
+        <h2>📈 Progreso semanal</h2>
+        <span class="smallHint">Se calcula automáticamente según checklist.</span>
+      </div>
+
+      <div class="progressBar">
+        <div class="progressFill" id="progressFill"></div>
+      </div>
+
+      <div class="progressInfo">
+        <span id="progressText">0% completado</span>
+        <span id="doneCount">0 completadas</span>
+        <span id="totalCount">0 totales</span>
+      </div>
+    </section>
+
+    <main class="grid">
+
+      <section class="card">
+        <div class="dayTitle">
+          <h2>Lunes</h2>
+          <span class="tag">15:00 - 21:00</span>
+        </div>
+
+        <div class="session fisica">
+          <input type="checkbox" class="task">
+          <span class="time">15:00 - 16:30</span>
+          <span class="desc">Física: teoría aplicada + ejemplos guiados.</span>
+          <span class="micro">📌 Objetivo: entender fórmula + cuándo se usa.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">16:30 - 16:50</span>
+          <span class="desc">Break real (caminar + agua).</span>
+          <span class="micro">⚠️ No celular infinito: 10-15 min máximo.</span>
+        </div>
+
+        <div class="session fisica">
+          <input type="checkbox" class="task">
+          <span class="time">16:50 - 18:20</span>
+          <span class="desc">Física: ejercicios tipo PAES + velocidad.</span>
+          <span class="micro">🎯 Meta: 20-30 ejercicios.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">18:20 - 19:00</span>
+          <span class="desc">Descanso fuerte + snack.</span>
+          <span class="micro">🥛 Ideal: proteína + fruta + agua.</span>
+        </div>
+
+        <div class="session quimica">
+          <input type="checkbox" class="task">
+          <span class="time">19:00 - 20:00</span>
+          <span class="desc">Química: problemas cortos y conceptos clave.</span>
+          <span class="micro">🎯 Meta: 15-20 preguntas rápidas.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">20:00 - 20:15</span>
+          <span class="desc">Break corto.</span>
+          <span class="micro">Respira + estira espalda.</span>
+        </div>
+
+        <div class="session correccion">
+          <input type="checkbox" class="task">
+          <span class="time">20:15 - 21:00</span>
+          <span class="desc">Corrección: banco de errores + fórmulas esenciales.</span>
+          <span class="micro">📌 Escribe: error + causa + solución + ejercicio parecido.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="dayTitle">
+          <h2>Martes</h2>
+          <span class="tag">10:00 - 16:00</span>
+        </div>
+
+        <div class="session quimica">
+          <input type="checkbox" class="task">
+          <span class="time">10:00 - 11:30</span>
+          <span class="desc">Química: teoría + ejemplos guiados.</span>
+          <span class="micro">📌 Enfócate en reglas y procedimientos.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">11:30 - 11:50</span>
+          <span class="desc">Break.</span>
+          <span class="micro">Agua + mini snack.</span>
+        </div>
+
+        <div class="session quimica">
+          <input type="checkbox" class="task">
+          <span class="time">11:50 - 13:20</span>
+          <span class="desc">Química: ejercicios PAES + cálculo.</span>
+          <span class="micro">🎯 Meta: 25 ejercicios (mol, concentración, balance, etc.).</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">13:20 - 14:30</span>
+          <span class="desc">Almuerzo + descanso real.</span>
+          <span class="micro">⚠️ Nada de estudiar durante comida: desconectar.</span>
+        </div>
+
+        <div class="session biologia">
+          <input type="checkbox" class="task">
+          <span class="time">14:30 - 15:30</span>
+          <span class="desc">Biología: lectura activa + mapas mentales.</span>
+          <span class="micro">📌 Explica en voz alta como si enseñaras.</span>
+        </div>
+
+        <div class="session correccion">
+          <input type="checkbox" class="task">
+          <span class="time">15:30 - 16:00</span>
+          <span class="desc">Corrección rápida + resumen del día.</span>
+          <span class="micro">🎯 Escribe 5 conceptos clave en 5 líneas.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">19:00 - 21:00</span>
+          <span class="desc">Preuniversitario Biología.</span>
+          <span class="micro">📌 Después: descanso. No estudiar pesado.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="dayTitle">
+          <h2>Miércoles</h2>
+          <span class="tag">Sin estudio</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">Día completo</span>
+          <span class="desc">Descanso / obligaciones / recuperación mental.</span>
+          <span class="micro">💡 Opcional: 10 min Anki o fórmulas.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">19:00 - 21:00</span>
+          <span class="desc">Preuniversitario (según corresponda).</span>
+          <span class="micro">📌 Llega y duerme temprano.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="dayTitle">
+          <h2>Jueves</h2>
+          <span class="tag">10:00 - 16:00</span>
+        </div>
+
+        <div class="session fisica">
+          <input type="checkbox" class="task">
+          <span class="time">10:00 - 12:00</span>
+          <span class="desc">Física: problemas pesados + método.</span>
+          <span class="micro">🎯 Meta: 15 ejercicios medios + 5 difíciles.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">12:00 - 12:20</span>
+          <span class="desc">Break.</span>
+          <span class="micro">Caminar 3-5 min.</span>
+        </div>
+
+        <div class="session fisica">
+          <input type="checkbox" class="task">
+          <span class="time">12:20 - 13:50</span>
+          <span class="desc">Física: ejercicios PAES + rapidez.</span>
+          <span class="micro">📌 Cronómetro: 2 min por pregunta.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">13:50 - 14:40</span>
+          <span class="desc">Almuerzo + descanso.</span>
+          <span class="micro">Evitar azúcar excesiva.</span>
+        </div>
+
+        <div class="session biologia">
+          <input type="checkbox" class="task">
+          <span class="time">14:40 - 15:40</span>
+          <span class="desc">Biología: ejercicios + interpretación de gráficos.</span>
+          <span class="micro">🎯 Meta: 20 preguntas rápidas.</span>
+        </div>
+
+        <div class="session correccion">
+          <input type="checkbox" class="task">
+          <span class="time">15:40 - 16:00</span>
+          <span class="desc">Corrección y dudas pendientes.</span>
+          <span class="micro">📌 Prioridad: errores repetidos.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">19:00 - 21:00</span>
+          <span class="desc">Preuniversitario Física.</span>
+          <span class="micro">📌 Llega y duerme temprano.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="dayTitle">
+          <h2>Viernes</h2>
+          <span class="tag">18:00 - 23:00</span>
+        </div>
+
+        <div class="session quimica">
+          <input type="checkbox" class="task">
+          <span class="time">18:00 - 19:30</span>
+          <span class="desc">Química: ejercicios de cálculo (nivel PAES).</span>
+          <span class="micro">🎯 Meta: 25 ejercicios de estequiometría o soluciones.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">19:30 - 20:00</span>
+          <span class="desc">Break + comida ligera.</span>
+          <span class="micro">⚠️ No acostarse ni tirarse al celular demasiado.</span>
+        </div>
+
+        <div class="session fisica">
+          <input type="checkbox" class="task">
+          <span class="time">20:00 - 21:30</span>
+          <span class="desc">Física: ondas/electricidad + ejercicios.</span>
+          <span class="micro">📌 Si fallas mucho, repite el tema 2 veces.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">21:30 - 21:50</span>
+          <span class="desc">Break.</span>
+          <span class="micro">Respira + agua.</span>
+        </div>
+
+        <div class="session correccion">
+          <input type="checkbox" class="task">
+          <span class="time">21:50 - 23:00</span>
+          <span class="desc">Corrección + resumen semanal de errores.</span>
+          <span class="micro">📌 Escribe tus 3 mayores debilidades actuales.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="dayTitle">
+          <h2>Sábado</h2>
+          <span class="tag">16:00 - 23:00</span>
+        </div>
+
+        <div class="session ensayo">
+          <input type="checkbox" class="task">
+          <span class="time">16:00 - 18:40</span>
+          <span class="desc">Ensayo PAES completo (80 preguntas / 2h40).</span>
+          <span class="micro">🎯 Simulación real: silencio + cronómetro.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">18:40 - 19:20</span>
+          <span class="desc">Descanso fuerte: comida + desconexión total.</span>
+          <span class="micro">⚠️ No revisar redes infinitamente.</span>
+        </div>
+
+        <div class="session correccion">
+          <input type="checkbox" class="task">
+          <span class="time">19:20 - 21:00</span>
+          <span class="desc">Corrección profunda del ensayo.</span>
+          <span class="micro">📌 Clasifica errores: concepto / cálculo / lectura / apuro.</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">21:00 - 21:20</span>
+          <span class="desc">Break.</span>
+          <span class="micro">Relajar ojos y mente.</span>
+        </div>
+
+        <div class="session fisica">
+          <input type="checkbox" class="task">
+          <span class="time">21:20 - 23:00</span>
+          <span class="desc">Refuerzo del tema más débil del ensayo.</span>
+          <span class="micro">🔥 Física si es tu peor, siempre Física primero.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="dayTitle">
+          <h2>Domingo</h2>
+          <span class="tag">Descanso</span>
+        </div>
+
+        <div class="session descanso">
+          <input type="checkbox" class="task">
+          <span class="time">Día completo</span>
+          <span class="desc">Descanso total: clave para concentración.</span>
+          <span class="micro">Dormir bien = subir puntaje.</span>
+        </div>
+
+        <div class="session ensayo">
+          <input type="checkbox" class="task">
+          <span class="time">1 domingo cada 2 semanas (17:00 - 18:30)</span>
+          <span class="desc">Mini ensayo de 40 preguntas.</span>
+          <span class="micro">📌 Solo si estás con energía.</span>
+        </div>
+
+        <div class="session correccion">
+          <input type="checkbox" class="task">
+          <span class="time">18:30 - 19:30</span>
+          <span class="desc">Corrección rápida del mini ensayo.</span>
+          <span class="micro">🎯 Anotar fallos repetidos.</span>
+        </div>
+      </section>
+
+    </main>
+
+    <section class="notesGrid">
+
+      <div class="noteCard">
+        <h2>⚫ Banco de errores (OBLIGATORIO)</h2>
+        <p class="smallHint">
+          Anota tus fallos siempre en este formato: <b>tema → error → por qué fallé → solución → ejercicio parecido</b>.
+          Esto es lo que sube puntajes rápido.
+        </p>
+        <textarea id="errores" placeholder="Ejemplo:
+Tema: Ley de Ohm
+Error: confundí serie/paralelo
+Por qué: no hice diagrama mental
+Solución: recordar que en serie se suma R y la corriente es igual
+Ejercicio similar: #15 ensayo sábado"></textarea>
+      </div>
+
+      <div class="noteCard">
+        <h2>🧠 Fórmulas esenciales (Física / Química)</h2>
+        <p class="smallHint">
+          Copia aquí fórmulas clave que siempre olvidas.  
+          (Esto se transforma en tu hoja mental de la PAES).
+        </p>
+        <textarea id="formulas" placeholder="Ejemplo:
+v = λ·f
+F = m·a
+P = V·I
+n = m/M
+C = n/V"></textarea>
+      </div>
+
+      <div class="noteCard">
+        <h2>🔥 Objetivo semanal</h2>
+        <p class="smallHint">
+          Define la meta concreta de esta semana.  
+          Ejemplo: "Dominar lentes convergentes y subir a 70% en electricidad".
+        </p>
+        <textarea id="objetivo" placeholder="Escribe tu objetivo de esta semana..."></textarea>
+      </div>
+
+    </section>
+
+    <footer>
+      <b>🚀 Semana Final (8 al 14 de Junio) | Estrategia de Puntaje</b><br><br>
+
+      <div class="finalWeek">
+        <div class="finalBox"><b>Lunes 8:</b> Electricidad completa + estequiometría + corrección.</div>
+        <div class="finalBox"><b>Martes 9:</b> Ensayo completo + corrección inmediata + Preu Biología.</div>
+        <div class="finalBox"><b>Jueves 11:</b> Ondas + soluciones + fotosíntesis + Preu Física.</div>
+        <div class="finalBox"><b>Viernes 12:</b> Ensayo completo + corrección rápida + lista de fallos.</div>
+        <div class="finalBox"><b>Sábado 13:</b> Ensayo final + corrección profunda + repaso fórmulas.</div>
+        <div class="finalBox"><b>Domingo 14:</b> descanso inteligente + dormir temprano.</div>
+      </div>
+
+      <p class="tipStrong">
+        🔥 Regla PAES PRO: si repites el mismo error 2 veces, el problema no es el tema… es tu método.
+      </p>
+
+      <p>
+        <b>Checklist semanal recomendada:</b><br>
+        ✔ 1 ensayo completo (mínimo) <br>
+        ✔ 1 corrección profunda <br>
+        ✔ 3 bloques fuertes de física <br>
+        ✔ 2 bloques de química <br>
+        ✔ 2 bloques de biología <br>
+        ✔ 1 resumen de errores semanal <br>
+      </p>
+    </footer>
+
+  </div>
+
+  <script>
+    function toggleDark() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+    }
+
+    function saveAll() {
+      const checks = document.querySelectorAll(".task");
+      const checkState = [];
+      checks.forEach((c) => checkState.push(c.checked));
+      localStorage.setItem("tasks", JSON.stringify(checkState));
+
+      localStorage.setItem("errores", document.getElementById("errores").value);
+      localStorage.setItem("formulas", document.getElementById("formulas").value);
+      localStorage.setItem("objetivo", document.getElementById("objetivo").value);
+
+      alert("✅ Guardado correctamente (Planner PRO).");
+      updateProgress();
+    }
+
+    function loadAll() {
+      const dark = localStorage.getItem("darkMode");
+      if (dark === "true") document.body.classList.add("dark");
+
+      const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+      const checks = document.querySelectorAll(".task");
+      checks.forEach((c, i) => c.checked = tasks[i] || false);
+
+      document.getElementById("errores").value = localStorage.getItem("errores") || "";
+      document.getElementById("formulas").value = localStorage.getItem("formulas") || "";
+      document.getElementById("objetivo").value = localStorage.getItem("objetivo") || "";
+
+      updateProgress();
+    }
+
+    function resetAll() {
+      if (!confirm("¿Seguro que quieres reiniciar el progreso semanal?")) return;
+
+      document.querySelectorAll(".task").forEach(c => c.checked = false);
+      updateProgress();
+      saveAll();
+    }
+
+    function updateProgress() {
+      const checks = document.querySelectorAll(".task");
+      const total = checks.length;
+      let done = 0;
+
+      checks.forEach(c => { if (c.checked) done++; });
+
+      const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+
+      document.getElementById("progressFill").style.width = percent + "%";
+      document.getElementById("progressText").innerText = percent + "% completado";
+      document.getElementById("doneCount").innerText = done + " completadas";
+      document.getElementById("totalCount").innerText = total + " totales";
+    }
+
+    document.addEventListener("change", function(e) {
+      if (e.target.classList.contains("task")) updateProgress();
+    });
+
+    window.onload = loadAll;
+  </script>
+
+</body>
+</html>
